@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>jQuery.tabbable example</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="jquery.tabbable.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$(document).keydown(handleDocumentKeyDown);
+				$('#tabMode').change(showExplanation);
+				showExplanation();
+			});
+
+			function handleDocumentKeyDown(event){
+				if(event.which === 9){
+					var tabMode = $('#tabMode').val();
+					switch(tabMode){
+					case 'tabbable':
+						if(event.shiftKey){
+							$.tabNext();
+						}
+						else{
+							$.tabPrev();
+						}
+						event.preventDefault();
+						break;
+
+					case 'focusable':
+						if(event.shiftKey){
+							$.focusNext();
+						}
+						else{
+							$.focusPrev();
+						}
+						event.preventDefault();
+						break;
+
+					case 'none':
+						event.preventDefault();
+					}
+				}
+			}
+
+			function showExplanation(){
+				var explanations = $('#explanations p');
+				explanations.hide();
+
+				var tabMode = $('#tabMode').val();
+				explanations.filter('.' + tabMode).show();
+
+				var tabModeOption = $('#tabMode option:selected');
+				$('h2 .mode').text(tabModeOption.text());
+			}
+		</script>
+
+		<style>
+			input:focus, textarea:focus, select:focus {
+				outline: 1px solid red;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<h1>jQuery.tabbable demo</h1>
+
+			<p>
+				This page showcases what you could do with jQuery.tabbable. Use the dropdown below to try the different
+				tabbing modes.
+			</p>
+
+			<h2>Current mode: <span class="mode"></span></h2>
+
+			<div id="explanations">
+				<p class="none">
+					Tabbing is currently disabled. This is done by registering an 'keydown' listener which executes
+					'event.preventDefault()'.
+				</p>
+
+				<p class="tabbable">
+					Tabbing is now simulated via jQuery.tabbable's '$.tabNext()' and '$.tabPrev()' methods. <br />
+					Tabbing works the same as default browser tabbing, except that you can't tab to elements outside of
+					the page (address bar of the browser etc).
+				</p>
+
+				<p class="focusable">
+					Tabbing is now simulated via jQuery.tabbable's '$.focusNext()' and '$.focusPrev()' methods. <br />
+					Tabbing works the same as default browser tabbing, except that you can't tab to elements outside of
+					the page (address bar of the browser etc). <br />
+					The difference with '$.tabNext' and '$.tabPrev' is that now elements which are 'focussable', but not
+					'tabbable' (elements with tabindex"=-1") can be selected.
+				</p>
+
+				<p class="default">
+				    Default browser tabbing. We do nothing here.
+				</p>
+			</div>
+		</div>
+
+		<form>
+			<fieldset>
+				<legend>Tab mode selection</legend>
+				<label for="tabMode">
+					Tab mode
+				</label>
+				<select id="tabMode">
+					<option value="none">Tabbing disabled</option>
+					<option value="tabbable">jQuery.tabbable tabbing</option>
+					<option value="focusable">jQuery.tabbable focussing</option>
+					<option value="default">Default browser tabbing</option>
+				</select>
+			</fieldset>
+
+			<fieldset>
+				<legend>Some inputs</legend>
+				<div class="row">
+					<label for="input1">Input 1</label>
+					<input id="input1" type="text" />
+				</div>
+				<div class="row">
+					<label for="input2">Input 2</label>
+					<input id="input2" type="checkbox" />
+				</div>
+				<div class="row">
+					<label for="input3">Input 3</label>
+					<input id="input3" type="radio" />
+				</div>
+				<div class="row">
+					<label for="input4">Input 4</label>
+					<textarea id="input4"></textarea>
+				</div>
+				<div class="row">
+					<label for="input5">Input 5</label>
+					<input id="input5" type="text" />
+				</div>
+				<div class="row">
+					<label for="input6">Input 6</label>
+					<input id="input6" type="text" />
+				</div>
+				<div class="row">
+					<label for="input6">Input with negative tabindex (can be focussed, not tabbed)</label>
+					<input id="input6" type="text" tabindex="-1" />
+				</div>
+			</fieldset>
+		</form>
+	</body>
+</html>

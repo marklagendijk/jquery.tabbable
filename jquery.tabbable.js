@@ -12,42 +12,68 @@
 	'use strict';
 
 	/**
-	 * Focusses the next tabbable element.
+	 * Focusses the next :focusable element. Elements with tabindex=-1 are focusable, but not tabable.
 	 * Does not take into account that the taborder might be different as the :tabbable elements order
 	 * (which happens when using tabindexes which are greater than 0).
 	 */
 	$.focusNext = function(){
-		var tabbables = $(':tabbable');
-		var current = $(':focus');
-		var nextIndex = 0;
-		if(current.length === 1){
-			var currentIndex = tabbables.index(current);
-			if(currentIndex + 2 < tabbables.length){
-				nextIndex = currentIndex + 1;
-			}
-		}
-
-		tabbables.eq(nextIndex).focus();
+		selectNextTabbableOrFocusable(':focusable');
 	};
 
 	/**
-	 * Focusses the previous tabbable element
+	 * Focusses the previous :focusable element. Elements with tabindex=-1 are focusable, but not tabable.
 	 * Does not take into account that the taborder might be different as the :tabbable elements order
 	 * (which happens when using tabindexes which are greater than 0).
 	 */
 	$.focusPrev = function(){
-		var tabbables = $(':tabbable');
+		selectPrevTabbableOrFocusable(':focusable');
+	};
+
+	/**
+	 * Focusses the next :tabable element.
+	 * Does not take into account that the taborder might be different as the :tabbable elements order
+	 * (which happens when using tabindexes which are greater than 0).
+	 */
+	$.tabNext = function(){
+		selectNextTabbableOrFocusable(':tabbable');
+	};
+
+	/**
+	 * Focusses the previous :tabbable element
+	 * Does not take into account that the taborder might be different as the :tabbable elements order
+	 * (which happens when using tabindexes which are greater than 0).
+	 */
+	$.tabPrev = function(){
+		selectPrevTabbableOrFocusable(':tabbable');
+	};
+
+	function selectNextTabbableOrFocusable(selector){
+		var selectables = $(selector);
 		var current = $(':focus');
-		var prevIndex = tabbables.length - 1;
+		var prevIndex = selectables.length - 1;
 		if(current.length === 1){
-			var currentIndex = tabbables.index(current);
+			var currentIndex = selectables.index(current);
 			if(currentIndex > 0){
 				prevIndex = currentIndex - 1;
 			}
 		}
 
-		tabbables.eq(prevIndex).focus();
-	};
+		selectables.eq(prevIndex).focus();
+	}
+
+	function selectPrevTabbableOrFocusable(selector){
+		var selectables = $(selector);
+		var current = $(':focus');
+		var nextIndex = 0;
+		if(current.length === 1){
+			var currentIndex = selectables.index(current);
+			if(currentIndex + 1 < selectables.length){
+				nextIndex = currentIndex + 1;
+			}
+		}
+
+		selectables.eq(nextIndex).focus();
+	}
 
 	/**
 	 * :focusable and :tabbable, both taken from jQuery UI Core
