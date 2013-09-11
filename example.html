@@ -17,20 +17,21 @@
 					switch(tabMode){
 					case 'tabbable':
 						if(event.shiftKey){
-							$.tabNext();
+							$.tabPrev();
+
 						}
 						else{
-							$.tabPrev();
+							$.tabNext();
 						}
 						event.preventDefault();
 						break;
 
 					case 'focusable':
 						if(event.shiftKey){
-							$.focusNext();
+							$.focusPrev();
 						}
 						else{
-							$.focusPrev();
+							$.focusNext();
 						}
 						event.preventDefault();
 						break;
