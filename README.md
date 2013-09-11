@@ -16,5 +16,6 @@ jQuery.tabPrev();
 jQuery.focusNext();
 
 // Focuses the previous ':focusable' element.
+// Elements which have a tabindex of '-1' are 'focusable', but not 'tabbable'.
 jQuery.focusPrev();
 ```
