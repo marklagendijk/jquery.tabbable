@@ -1,0 +1,11 @@
+{
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "~3.3.0",
+    "gulp-uglify": "~0.1.0",
+    "gulp-rename": "~0.2.1"
+  },
+  "scripts": {
+    "minify": "gulp minify"
+  }
+}
