@@ -66,40 +66,27 @@
 		opts.key = opts.key || true;
 
 		tabIndexes[opts.key] = tabIndexes[opts.key] || [];
-		if(tabIndexes[opts.key].length === 0) {
+		tabbables[opts.key] = tabbables[opts.key] || [];
 
-			tabbables[opts.key] = $(":tabbable",opts.container).toArray();
-			if(opts.exclude && opts.exclude.length) {
-				if(opts.exclude instanceof jQuery) {
-					opts.exclude = opts.exclude.toArray();
-				}
-				tabbables[opts.key] = $(tabbables[opts.key]).not($(":tabbable", opts.exclude)).toArray();
+		var newTabbables = $(":tabbable",opts.container).toArray();
+		if(opts.exclude && opts.exclude.length) {
+			if(opts.exclude instanceof jQuery) {
+				opts.exclude = opts.exclude.toArray();
 			}
+			newTabbables = $(newTabbables).not($(":tabbable", opts.exclude)).toArray();
+		}
 
-			
-			tabbables[opts.key].forEach(function(el) {
+		if(newTabbables.length > 0) {
+			tabbables[opts.key] = tabbables[opts.key].concat(newTabbables);
+
+		
+			newTabbables.forEach(function(el) {
 				tabIndexes[opts.key].push(el.tabIndex);
 				el.tabIndex = -1;
 			});
-		} else {
-			var newTabbables = $(":tabbable",opts.container).toArray();
-			if(opts.exclude && opts.exclude.length) {
-				if(opts.exclude instanceof jQuery) {
-					opts.exclude = opts.exclude.toArray();
-				}
-				newTabbables = $(newTabbables).not($(":tabbable", opts.exclude)).toArray();
-			}
-
-			if(newTabbables.length > 0) {
-				tabbables[opts.key].concat(newTabbables);
-
-			
-				newTabbables.forEach(function(el) {
-					tabIndexes[opts.key].push(el.tabIndex);
-					el.tabIndex = -1;
-				});
-			}
 		}
+
+
 		return opts.key;
 	}
 
