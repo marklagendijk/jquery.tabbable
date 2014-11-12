@@ -68,7 +68,6 @@
 		tabIndexes[opts.key] = tabIndexes[opts.key] || [];
 
 		tabbables[opts.key] = $(":tabbable",opts.container);
-		debugger;
 		if(opts.exclude && opts.exclude.length) {
 			if(opts.exclude instanceof jQuery) {
 				opts.exclude = opts.exclude.toArray();
@@ -141,7 +140,7 @@
 
 		// Support: Opera <= 12.12
 		// Opera reports offsetWidths and offsetHeights less than zero on some elements
-		return (!jQuery.support.reliableHiddenOffsets && ((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none");
+		return (elem.offsetWidth <= 0 && elem.offsetHeight <= 0 && window.getComputedStyle(elem).display !== 'inline') || (!jQuery.support.reliableHiddenOffsets && ((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none");
 	};
 
 	jQuery.expr.filters.visible = function( elem ) {
