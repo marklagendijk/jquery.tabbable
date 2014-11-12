@@ -52,10 +52,12 @@
 
 	/** 
 	 * Disables tabbing to all tabbable elements. 
-	 * {
+	 * options: 
 	 *	container: Limit inside container, defaults to document.
-	 *  exclude: Excludes elements inside container. Accepts an array of elements
-	 * }
+	 *  exclude: Excludes elements inside container. Accepts an array of elements or jQuery selection.
+	 *  key: Any acceptable array element key, used to create disabled tabbing groups. Defaults to true
+	 *
+	 * Returns: key
 	 */
 	$.disableTabbing = function(options) {
 		var opts = options || {};
@@ -66,11 +68,12 @@
 		tabIndexes[opts.key] = tabIndexes[opts.key] || [];
 
 		tabbables[opts.key] = $(":tabbable",opts.container);
+		debugger;
 		if(opts.exclude && opts.exclude.length) {
 			if(opts.exclude instanceof jQuery) {
 				opts.exclude = opts.exclude.toArray();
 			}
-			tabbables[opts.key] = $(tabbables[opts.key]).not(":tabbable", opts.exclude);
+			tabbables[opts.key] = $(tabbables[opts.key]).not($(":tabbable", opts.exclude));
 		}
 
 		
@@ -81,10 +84,18 @@
 		return opts.key;
 	}
 
+
+
+	/** 
+	 * Enables tabbing to all tabbable elements. 
+	 *  optKey: Key returned from disableTabbing. Defaults to true
+	 *
+	 * Returns: Boolean if tabIndexes were changed.
+	 */
 	$.enableTabbing = function(optKey) {
 		var key = optKey || true;
 		if(tabIndexes[key] && tabIndexes[key].length > 0) {
-			tabbables.each(function() { this.tabIndex = tabIndexes[key].shift(); });
+			tabbables[key].each(function() { this.tabIndex = tabIndexes[key].shift(); });
 			delete tabbables[key];
 			delete tabIndexes[key];
 			return true;
