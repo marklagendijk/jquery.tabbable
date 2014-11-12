@@ -66,20 +66,40 @@
 		opts.key = opts.key || true;
 
 		tabIndexes[opts.key] = tabIndexes[opts.key] || [];
+		if(tabIndexes[opts.key].length === 0) {
 
-		tabbables[opts.key] = $(":tabbable",opts.container);
-		if(opts.exclude && opts.exclude.length) {
-			if(opts.exclude instanceof jQuery) {
-				opts.exclude = opts.exclude.toArray();
+			tabbables[opts.key] = $(":tabbable",opts.container).toArray();
+			if(opts.exclude && opts.exclude.length) {
+				if(opts.exclude instanceof jQuery) {
+					opts.exclude = opts.exclude.toArray();
+				}
+				tabbables[opts.key] = $(tabbables[opts.key]).not($(":tabbable", opts.exclude)).toArray();
 			}
-			tabbables[opts.key] = $(tabbables[opts.key]).not($(":tabbable", opts.exclude));
-		}
 
-		
-		tabbables[opts.key].each(function() {
-			tabIndexes[opts.key].push(this.tabIndex);
-			this.tabIndex = -1;
-		});
+			
+			tabbables[opts.key].forEach(function(el) {
+				tabIndexes[opts.key].push(el.tabIndex);
+				el.tabIndex = -1;
+			});
+		} else {
+			var newTabbables = $(":tabbable",opts.container).toArray();
+			if(opts.exclude && opts.exclude.length) {
+				if(opts.exclude instanceof jQuery) {
+					opts.exclude = opts.exclude.toArray();
+				}
+				newTabbables = $(newTabbables).not($(":tabbable", opts.exclude)).toArray();
+			}
+
+			if(newTabbables.length > 0) {
+				tabbables[opts.key].concat(newTabbables);
+
+			
+				newTabbables.forEach(function(el) {
+					tabIndexes[opts.key].push(el.tabIndex);
+					el.tabIndex = -1;
+				});
+			}
+		}
 		return opts.key;
 	}
 
@@ -94,7 +114,7 @@
 	$.enableTabbing = function(optKey) {
 		var key = optKey || true;
 		if(tabIndexes[key] && tabIndexes[key].length > 0) {
-			tabbables[key].each(function() { this.tabIndex = tabIndexes[key].shift(); });
+			tabbables[key].forEach(function(el) { el.tabIndex = tabIndexes[key].shift(); });
 			delete tabbables[key];
 			delete tabIndexes[key];
 			return true;
@@ -136,11 +156,26 @@
 	 * Correct jquery filters for Chrome 
 	 */
 
-	jQuery.expr.filters.hidden = function( elem ) {
+	jQuery.expr.filters.hidden = function( elem ) { 
 
+		var self = this;
+		self.layoutDisplays = ['table-column', 'table-column-group'];
+		self.hasLayoutBox = {};
+		self.rect = {};
 		// Support: Opera <= 12.12
 		// Opera reports offsetWidths and offsetHeights less than zero on some elements
-		return (elem.offsetWidth <= 0 && elem.offsetHeight <= 0 && window.getComputedStyle(elem).display !== 'inline') || (!jQuery.support.reliableHiddenOffsets && ((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none");
+		return ((((!(elem.offsetWidth > 0) || !(elem.offsetHeight > 0))
+					&& (((self.hasLayoutBox = self.layoutDisplays.indexOf(window.getComputedStyle(elem).display) > -1)
+							&& self.hasLayoutBox
+						) || ((self.rect = elem.getBoundingClientRect())
+							&& (!self.rect.width || !self.rect.height)
+						)
+					)
+				) || !(delete self.rect)
+			) || (!jQuery.support.reliableHiddenOffsets
+					&& ((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none"
+			)
+		);
 	};
 
 	jQuery.expr.filters.visible = function( elem ) {
