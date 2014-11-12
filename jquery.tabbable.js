@@ -11,6 +11,9 @@
 (function($){
 	'use strict';
 
+	var tabIndexes = [];
+	var tabbables = [];
+
 	/**
 	 * Focusses the next :focusable element. Elements with tabindex=-1 are focusable, but not tabable.
 	 * Does not take into account that the taborder might be different as the :tabbable elements order
@@ -47,6 +50,50 @@
 		selectPrevTabbableOrFocusable(':tabbable');
 	};
 
+	/** 
+	 * Disables tabbing to all tabbable elements. 
+	 * {
+	 *	container: Limit inside container, defaults to document.
+	 *  exclude: Excludes elements inside container. Accepts an array of elements
+	 * }
+	 */
+	$.disableTabbing = function(options) {
+		var opts = options || {};
+		opts.container = opts.container || document;
+		opts.exclude = opts.exclude || [];
+		opts.key = opts.key || true;
+
+		tabIndexes[opts.key] = tabIndexes[opts.key] || [];
+
+		tabbables[opts.key] = $(":tabbable",opts.container);
+		if(opts.exclude && opts.exclude.length) {
+			if(opts.exclude instanceof jQuery) {
+				opts.exclude = opts.exclude.toArray();
+			}
+			tabbables[opts.key] = $(tabbables[opts.key]).not(":tabbable", opts.exclude);
+		}
+
+		
+		tabbables[opts.key].each(function() {
+			tabIndexes[opts.key].push(this.tabIndex);
+			this.tabIndex = -1;
+		});
+		return opts.key;
+	}
+
+	$.enableTabbing = function(optKey) {
+		var key = optKey || true;
+		if(tabIndexes[key] && tabIndexes[key].length > 0) {
+			tabbables.each(function() { this.tabIndex = tabIndexes[key].shift(); });
+			delete tabbables[key];
+			delete tabIndexes[key];
+			return true;
+		}
+
+		return false;
+	}
+
+
 	function selectNextTabbableOrFocusable(selector){
 		var selectables = $(selector);
 		var current = $(':focus');
@@ -74,6 +121,22 @@
 
 		selectables.eq(prevIndex).focus();
 	}
+
+	/**
+	 * Correct jquery filters for Chrome 
+	 */
+
+	jQuery.expr.filters.hidden = function( elem ) {
+
+		// Support: Opera <= 12.12
+		// Opera reports offsetWidths and offsetHeights less than zero on some elements
+		return (!jQuery.support.reliableHiddenOffsets && ((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none");
+	};
+
+	jQuery.expr.filters.visible = function( elem ) {
+		return !jQuery.expr.filters.hidden( elem );
+	};
+
 
 	/**
 	 * :focusable and :tabbable, both taken from jQuery UI Core
@@ -133,4 +196,6 @@
 			}).length;
 		}
 	}
+
+
 })(jQuery);
