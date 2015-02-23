@@ -35,5 +35,5 @@ $(':focusable');
 ```
 
 ## Installation
-1. `bower install jQuery.tabbable --save` or `npm install jquery.tabbable --save`
+1. `bower install jquery.tabbable --save` or `npm install jquery.tabbable --save`
 2. Include `jquery.tabbable.min.js`
