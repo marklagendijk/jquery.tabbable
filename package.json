@@ -1,4 +1,8 @@
 {
+  "name": "jQuery.tabbable",
+  "version": "1.0.1",
+  "description": "Simple utility for selecting the next / previous 'tabbable' element. Includes and uses the ':tabbable' and ':focusable' selectors from jQuery UI Core.",
+  "main": "jquery.tabbable.js",
   "dependencies": {},
   "devDependencies": {
     "gulp": "~3.3.0",
@@ -7,5 +11,22 @@
   },
   "scripts": {
     "minify": "gulp minify"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://marklagendijk@github.com/marklagendijk/jQuery.tabbable.git"
+  },
+  "keywords": [
+    "jQuery",
+    "tab",
+    "focus",
+    ":tabbable",
+    ":focusable"
+  ],
+  "author": "Mark Lagendijk <mark@lagendijk.info>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marklagendijk/jQuery.tabbable/issues"
+  },
+  "homepage": "https://github.com/marklagendijk/jQuery.tabbable"
 }
