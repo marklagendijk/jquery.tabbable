@@ -1,5 +1,5 @@
 {
-  "name": "jQuery.tabbable",
+  "name": "jquery.tabbable",
   "version": "1.0.1",
   "description": "Simple utility for selecting the next / previous 'tabbable' element. Includes and uses the ':tabbable' and ':focusable' selectors from jQuery UI Core.",
   "main": "jquery.tabbable.js",
