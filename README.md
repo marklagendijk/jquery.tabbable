@@ -15,13 +15,28 @@ jQuery.tabNext();
 // Focuses the previous ':tabable' element.
 jQuery.tabPrev();
 
-// Focuses the previous ':focusable' element. 
+// Focuses the previous ':focusable' element.
 // Elements which have a tabindex of '-1' are 'focusable', but not 'tabbable'.
 jQuery.focusNext();
 
 // Focuses the previous ':focusable' element.
 // Elements which have a tabindex of '-1' are 'focusable', but not 'tabbable'.
 jQuery.focusPrev();
+
+
+// Find the next ':tabable' element.
+jQuery.findNextTab();
+
+// Find the previous ':tabable' element.
+jQuery.findPreviousTab();
+
+// Find the previous ':focusable' element.
+// Elements which have a tabindex of '-1' are 'focusable', but not 'tabbable'.
+jQuery.findNextFocus();
+
+// Find the previous ':focusable' element.
+// Elements which have a tabindex of '-1' are 'focusable', but not 'tabbable'.
+jQuery.findPreviousFocus();
 ```
 
 ### Selectors
