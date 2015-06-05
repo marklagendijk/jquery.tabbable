@@ -8,13 +8,15 @@
  * Released under the MIT license
  *
  */
-(function (factory) {
-    if (typeof define !== "undefined") {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
         define(['jquery'], factory);
     } else {
-        factory(jQuery);
+        // Browser globals
+        root.amdWeb = factory(root.jQuery);
     }
-})(function($){
+})(function ($) {
     'use strict';
 
     /**
@@ -22,7 +24,7 @@
      * Does not take into account that the taborder might be different as the :tabbable elements order
      * (which happens when using tabindexes which are greater than 0).
      */
-    $.focusNext = function(){
+    $.focusNext = function () {
         selectNextTabbableOrFocusable(':focusable');
     };
 
@@ -31,7 +33,7 @@
      * Does not take into account that the taborder might be different as the :tabbable elements order
      * (which happens when using tabindexes which are greater than 0).
      */
-    $.focusPrev = function(){
+    $.focusPrev = function () {
         selectPrevTabbableOrFocusable(':focusable');
     };
 
@@ -40,7 +42,7 @@
      * Does not take into account that the taborder might be different as the :tabbable elements order
      * (which happens when using tabindexes which are greater than 0).
      */
-    $.tabNext = function(){
+    $.tabNext = function () {
         selectNextTabbableOrFocusable(':tabbable');
     };
 
@@ -49,17 +51,17 @@
      * Does not take into account that the taborder might be different as the :tabbable elements order
      * (which happens when using tabindexes which are greater than 0).
      */
-    $.tabPrev = function(){
+    $.tabPrev = function () {
         selectPrevTabbableOrFocusable(':tabbable');
     };
 
-    function selectNextTabbableOrFocusable(selector){
+    function selectNextTabbableOrFocusable(selector) {
         var selectables = $(selector);
         var current = $(':focus');
         var nextIndex = 0;
-        if(current.length === 1){
+        if (current.length === 1) {
             var currentIndex = selectables.index(current);
-            if(currentIndex + 1 < selectables.length){
+            if (currentIndex + 1 < selectables.length) {
                 nextIndex = currentIndex + 1;
             }
         }
@@ -67,13 +69,13 @@
         selectables.eq(nextIndex).focus();
     }
 
-    function selectPrevTabbableOrFocusable(selector){
+    function selectPrevTabbableOrFocusable(selector) {
         var selectables = $(selector);
         var current = $(':focus');
         var prevIndex = selectables.length - 1;
-        if(current.length === 1){
+        if (current.length === 1) {
             var currentIndex = selectables.index(current);
-            if(currentIndex > 0){
+            if (currentIndex > 0) {
                 prevIndex = currentIndex - 1;
             }
         }
@@ -84,24 +86,24 @@
     /**
      * :focusable and :tabbable, both taken from jQuery UI Core
      */
-    $.extend($.expr[ ':' ], {
+    $.extend($.expr[':'], {
         data: $.expr.createPseudo ?
-                  $.expr.createPseudo(function(dataName){
-                      return function(elem){
+                  $.expr.createPseudo(function (dataName) {
+                      return function (elem) {
                           return !!$.data(elem, dataName);
                       };
                   }) :
                   // support: jQuery <1.8
-                  function(elem, i, match){
-                      return !!$.data(elem, match[ 3 ]);
+                  function (elem, i, match) {
+                      return !!$.data(elem, match[3]);
                   },
 
-        focusable: function(element){
+        focusable: function (element) {
             return focusable(element, !isNaN($.attr(element, 'tabindex')));
         },
 
-        tabbable: function(element){
-            var tabIndex = $.attr(element, 'tabindex'),
+        tabbable: function (element) {
+            var tabIndex      = $.attr(element, 'tabindex'),
                 isTabIndexNaN = isNaN(tabIndex);
             return ( isTabIndexNaN || tabIndex >= 0 ) && focusable(element, !isTabIndexNaN);
         }
@@ -112,14 +114,14 @@
      * @param element
      * @returns {*}
      */
-    function focusable(element){
+    function focusable(element) {
         var map, mapName, img,
-            nodeName = element.nodeName.toLowerCase(),
+            nodeName         = element.nodeName.toLowerCase(),
             isTabIndexNotNaN = !isNaN($.attr(element, 'tabindex'));
-        if('area' === nodeName){
+        if ('area' === nodeName) {
             map = element.parentNode;
             mapName = map.name;
-            if(!element.href || !mapName || map.nodeName.toLowerCase() !== 'map'){
+            if (!element.href || !mapName || map.nodeName.toLowerCase() !== 'map') {
                 return false;
             }
             img = $('img[usemap=#' + mapName + ']')[0];
@@ -133,8 +135,8 @@
                 // the element and all of its ancestors must be visible
             visible(element);
 
-        function visible(element){
-            return $.expr.filters.visible(element) && !$(element).parents().addBack().filter(function(){
+        function visible(element) {
+            return $.expr.filters.visible(element) && !$(element).parents().addBack().filter(function () {
                     return $.css(this, 'visibility') === 'hidden';
                 }).length;
         }
