@@ -195,7 +195,7 @@
 			return ( isTabIndexNaN || tabIndex >= 0 ) && focusable(element, !isTabIndexNaN);
 		}
 	});
-
+	
 	/**
 	 * focussable function, taken from jQuery UI Core
 	 * @param element
@@ -214,7 +214,7 @@
 			img = $('img[usemap=#' + mapName + ']')[0];
 			return !!img && visible(img);
 		}
-		return ( /input|select|textarea|button|object/.test(nodeName) ?
+		return ( /^(input|select|textarea|button|object)$/.test(nodeName) ?
 			!element.disabled :
 			'a' === nodeName ?
 				element.href || isTabIndexNotNaN :
