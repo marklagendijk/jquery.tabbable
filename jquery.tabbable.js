@@ -11,6 +11,9 @@
 (function($){
 	'use strict';
 
+	var tabIndexes = [];
+	var tabbables = [];
+
 	/**
 	 * Focusses the next :focusable element. Elements with tabindex=-1 are focusable, but not tabable.
 	 * Does not take into account that the taborder might be different as the :tabbable elements order
@@ -47,6 +50,67 @@
 		selectPrevTabbableOrFocusable(':tabbable');
 	};
 
+	/** 
+	 * Disables tabbing to all tabbable elements. 
+	 * options: 
+	 *	container: Limit inside container, defaults to document.
+	 *  exclude: Excludes elements inside container. Accepts an array of elements or jQuery selection.
+	 *  key: Any acceptable array element key, used to create disabled tabbing groups. Defaults to true
+	 *
+	 * Returns: key
+	 */
+	$.disableTabbing = function(options) {
+		var opts = options || {};
+		opts.container = opts.container || document;
+		opts.exclude = opts.exclude || [];
+		opts.key = opts.key || true;
+
+		tabIndexes[opts.key] = tabIndexes[opts.key] || [];
+		tabbables[opts.key] = tabbables[opts.key] || [];
+
+		var newTabbables = $(":tabbable",opts.container).toArray();
+		if(opts.exclude && opts.exclude.length) {
+			if(opts.exclude instanceof jQuery) {
+				opts.exclude = opts.exclude.toArray();
+			}
+			newTabbables = $(newTabbables).not($(":tabbable", opts.exclude)).toArray();
+		}
+
+		if(newTabbables.length > 0) {
+			tabbables[opts.key] = tabbables[opts.key].concat(newTabbables);
+
+		
+			newTabbables.forEach(function(el) {
+				tabIndexes[opts.key].push(el.tabIndex);
+				el.tabIndex = -1;
+			});
+		}
+
+
+		return opts.key;
+	}
+
+
+
+	/** 
+	 * Enables tabbing to all tabbable elements. 
+	 *  optKey: Key returned from disableTabbing. Defaults to true
+	 *
+	 * Returns: Boolean if tabIndexes were changed.
+	 */
+	$.enableTabbing = function(optKey) {
+		var key = optKey || true;
+		if(tabIndexes[key] && tabIndexes[key].length > 0) {
+			tabbables[key].forEach(function(el) { el.tabIndex = tabIndexes[key].shift(); });
+			delete tabbables[key];
+			delete tabIndexes[key];
+			return true;
+		}
+
+		return false;
+	}
+
+
 	function selectNextTabbableOrFocusable(selector){
 		var selectables = $(selector);
 		var current = $(':focus');
@@ -76,6 +140,37 @@
 	}
 
 	/**
+	 * Correct jquery filters for Chrome 
+	 */
+
+	jQuery.expr.filters.hidden = function( elem ) { 
+
+		var self = this;
+		self.layoutDisplays = ['table-column', 'table-column-group'];
+		self.hasLayoutBox = {};
+		self.rect = {};
+		// Support: Opera <= 12.12
+		// Opera reports offsetWidths and offsetHeights less than zero on some elements
+		return ((((!(elem.offsetWidth > 0) || !(elem.offsetHeight > 0))
+					&& (((self.hasLayoutBox = self.layoutDisplays.indexOf(window.getComputedStyle(elem).display) > -1)
+							&& self.hasLayoutBox
+						) || ((self.rect = elem.getBoundingClientRect())
+							&& (!self.rect.width || !self.rect.height)
+						)
+					)
+				) || !(delete self.rect)
+			) || (!jQuery.support.reliableHiddenOffsets
+					&& ((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none"
+			)
+		);
+	};
+
+	jQuery.expr.filters.visible = function( elem ) {
+		return !jQuery.expr.filters.hidden( elem );
+	};
+
+
+	/**
 	 * :focusable and :tabbable, both taken from jQuery UI Core
 	 */
 	$.extend($.expr[ ':' ], {
@@ -100,7 +195,7 @@
 			return ( isTabIndexNaN || tabIndex >= 0 ) && focusable(element, !isTabIndexNaN);
 		}
 	});
-
+	
 	/**
 	 * focussable function, taken from jQuery UI Core
 	 * @param element
@@ -133,4 +228,6 @@
 			}).length;
 		}
 	}
+
+
 })(jQuery);
