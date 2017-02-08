@@ -133,4 +133,41 @@
 			}).length;
 		}
 	}
+	/**
+	 * Makes field automaticaly jumps to next when value gets to certain amount of characters
+	 * @param 
+	 * (int) number - Number of characters when to jump to next field
+	 * @return this
+	 **/
+	$.fn.focusNextAt = function(number){
+		$(this).each(function(){
+			var obj = $(this);
+			obj.bind("keydown",function(evt){
+				if (evt.which != 9 && evt.which != 8 && evt.which != 18 && evt.which != 13 && evt.which != 27 && evt.which !=16) {
+					console.log(evt.which);
+					if (obj.val().length >= number) {
+						$.focusNext();
+					};
+				}
+			})
+		});
+		return this;
+	}
+	/**
+	 * Makes field automaticaly jumps to previous when pressed backspace and field is empty. For example if I
+	 * Erase the whole field, leaving it blank and then pressing backspace one more time it returns to previous field.g	 
+	 * @returns this
+	 **/
+	$.fn.focusPrevOnEmpty = function(){
+		$(this).each(function(){
+			var obj = $(this);
+			obj.bind("keydown",function(evt){
+				if (obj.val().length == 0 && evt.which == 8) {
+					$.focusPrev();
+				}
+			})
+		})
+		
+		return this;
+	}
 })(jQuery);
